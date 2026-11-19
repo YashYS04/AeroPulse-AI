@@ -3,16 +3,27 @@
 // Vercel Serverless Function: Health Check Endpoint
 // ============================================================
 
-import type { VercelLikeRequest, VercelLikeResponse } from './_lib/http';
-import { handleCors, sendJson } from './_lib/http';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 
-export default function handler(req: VercelLikeRequest, res: VercelLikeResponse): void {
-  if (handleCors(req, res)) return;
+export default function handler(req: IncomingMessage, res: ServerResponse): void {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 
-  sendJson(res, 200, {
-    status: 'ok',
-    service: 'AeroPulse AI Gateway',
-    uptime: Math.round(process.uptime()),
-    timestamp: new Date().toISOString(),
-  });
+  if (req.method === 'OPTIONS') {
+    res.statusCode = 200;
+    res.end();
+    return;
+  }
+
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(
+    JSON.stringify({
+      status: 'ok',
+      service: 'AeroPulse AI Gateway',
+      uptime: Math.round(process.uptime()),
+      timestamp: new Date().toISOString(),
+    })
+  );
 }
