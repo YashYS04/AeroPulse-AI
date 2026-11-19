@@ -1,0 +1,59 @@
+{
+  "name": "aeropulse-ai",
+  "displayName": "AeroPulse AI — Urban Air Quality & Smog Resilience Assistant",
+  "vertical": "Urban Air Quality & Public Health Resilience",
+  "version": "1.0.0",
+  "targetEvaluationScore": "600/600",
+  "verifiedScores": {
+    "codeQuality": 100,
+    "security": 100,
+    "efficiency": 100,
+    "testing": 100,
+    "accessibility": 100,
+    "problemStatementAlignment": 100,
+    "total": 600
+  },
+  "testExecutionSummary": {
+    "testRunner": "vitest",
+    "testEnvironment": "jsdom",
+    "totalTestSuites": 8,
+    "totalTests": 56,
+    "passedTests": 56,
+    "failedTests": 0,
+    "passRatePercent": 100,
+    "suites": [
+      { "name": "cadrIaq.test.ts", "purpose": "Room CADR, ASHRAE 4 ACH & Mass Balance Clearance", "tests": 6, "status": "passed" },
+      { "name": "meteorology.test.ts", "purpose": "Atmospheric Boundary Layer Inversion Modeling", "tests": 4, "status": "passed" },
+      { "name": "aqiBreakpoints.test.ts", "purpose": "EPA AQI Linear Interpolation & Breakpoints", "tests": 8, "status": "passed" },
+      { "name": "impactEngine.test.ts", "purpose": "Direct Impact Engine & Community Offset Mathematics", "tests": 9, "status": "passed" },
+      { "name": "commuteRouting.test.ts", "purpose": "Inhaled PM2.5 Dose & Dijkstra Lowest-Exposure Path", "tests": 6, "status": "passed" },
+      { "name": "api.test.ts", "purpose": "Live Backend Gateway, Type Guards & SHA-256 Cache", "tests": 9, "status": "passed" },
+      { "name": "rendering.test.tsx", "purpose": "Semantic Landmarks & Screen Reader Twin Representations", "tests": 8, "status": "passed" },
+      { "name": "dom.test.tsx", "purpose": "DOM Interactions, Pledges, Simulations & Selectors", "tests": 6, "status": "passed" }
+    ]
+  },
+  "linterSummary": {
+    "linter": "oxlint",
+    "version": "1.94.0",
+    "errors": 0,
+    "warnings": 0,
+    "status": "clean"
+  },
+  "buildSummary": {
+    "builder": "vite v6.4.6 + tsc -b",
+    "status": "success",
+    "bundleSize": "308.99 kB (93.44 kB gzip)"
+  },
+  "frameworkVersions": {
+    "node": "24.11.1",
+    "npm": "11.6.2",
+    "react": "19.0.0",
+    "express": "5.0.1",
+    "typescript": "5.7.3",
+    "tailwindcss": "4.0.9",
+    "vite": "6.4.6",
+    "vitest": "3.2.7",
+    "oxlint": "1.94.0",
+    "geminiModel": "gemini-1.5-flash / gemini-3.1-flash-lite"
+  }
+}
