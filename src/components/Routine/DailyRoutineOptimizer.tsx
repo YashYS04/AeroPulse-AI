@@ -11,53 +11,24 @@ import { fetchRoutineInsights } from '@/services/apiService';
 import { RoutineTimeline } from './RoutineTimeline';
 
 export const DailyRoutineOptimizer: React.FC = React.memo(() => {
-  const { state, dispatch, activeZone } = useApp();
+  const { state, dispatch } = useApp();
   const [insight, setInsight] = useState<RoutineInsight | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const personaMeta = PERSONA_PROFILES[state.selectedPersona];
 
   const loadRoutine = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await fetchRoutineInsights(state.selectedPersona, state.selectedZoneId);
       setInsight(data);
-    } catch {
-      // High-fidelity fallback schedule
-      const fallbackHours = Array.from({ length: 6 }).map((_, i) => {
-        const hour = i * 4;
-        const isSafe = hour >= 12 && hour <= 16;
-        return {
-          hour,
-          label: `${String(hour).padStart(2, '0')}:00`,
-          predictedAqi: isSafe ? Math.round(activeZone.currentAqi * 0.45) : activeZone.currentAqi,
-          activityRecommendation: isSafe
-            ? 'Optimal solar convection window! Safe for 30-min outdoor errands or recreation.'
-            : 'Boundary inversion traps particulate soot. Stay indoors with HEPA air filtration.',
-          isSafeOutdoorWindow: isSafe,
-          maskRequired: !isSafe,
-          purifierSetting: (isSafe ? 'Eco' : 'Turbo') as 'Eco' | 'Turbo',
-        };
-      });
-
-      setInsight({
-        persona: state.selectedPersona,
-        zoneId: state.selectedZoneId,
-        generatedAt: new Date().toLocaleTimeString(),
-        optimalOutdoorWindow: '1:00 PM – 4:00 PM (Solar Convection Inversion Break)',
-        hourByHour: fallbackHours,
-        clinicalRationale: `For ${state.selectedPersona}, alveolar exposure during morning inversion peaks induces pulmonary inflammation. Restricting outdoor exertion cuts inhaled PM2.5 mass intake by up to 74%.`,
-        sustainableBehaviorAlternatives: [
-          'Shift daily grocery run to 2:00 PM during solar thermal convective lift',
-          'Utilize underground metro transit over surface diesel auto-rickshaws',
-          'Deploy DIY Corsi-Rosenthal unit in bedrooms at night',
-        ],
-        projectedExposureReductionPercent: 74,
-        isFallback: true,
-      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to generate GenAI routine.');
     } finally {
       setLoading(false);
     }
-  }, [state.selectedPersona, state.selectedZoneId, activeZone.currentAqi]);
+  }, [state.selectedPersona, state.selectedZoneId]);
 
   useEffect(() => {
     loadRoutine();
@@ -113,6 +84,20 @@ export const DailyRoutineOptimizer: React.FC = React.memo(() => {
           })}
         </div>
       </div>
+
+      {/* Error state */}
+      {error && !insight && (
+        <div className="p-4 rounded-xl bg-rose-950/40 border border-rose-800 text-rose-200 text-xs flex items-center justify-between">
+          <span>⚠️ {error}</span>
+          <button
+            type="button"
+            onClick={loadRoutine}
+            className="px-3 py-1 bg-rose-700 hover:bg-rose-600 rounded-lg text-white font-bold text-xs"
+          >
+            Retry GenAI
+          </button>
+        </div>
+      )}
 
       {/* Clinical Rationale & Metric Summary */}
       {insight && (

@@ -42,24 +42,9 @@ export function useGenAIAssistant() {
 
         dispatch({ type: 'ADD_CHAT_MESSAGE', payload: response });
       } catch (err) {
-        const fallbackMsg: AssistantMessage = {
-          id: `asst-fallback-${Date.now()}`,
-          sender: 'assistant',
-          content: `Based on ${state.selectedPersona} profile in ${activeZone.name} (AQI ${activeZone.currentAqi}): During winter smog inversions, limit high-exertion outdoor activities between 6:00 AM - 10:30 AM. Run indoor CADR purification units, seal exterior gaps, and schedule essential outdoor errands between 1:00 PM - 4:00 PM when solar convection opens the boundary layer.`,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          directImpactSummary: {
-            pm25AvertedMicrograms: Math.round(activeZone.pollutants.pm25 * 0.75 * 3),
-            co2AvertedKg: 1.2,
-            riskReductionPercent: 72,
-          },
-          recommendedActions: [
-            'Wear certified N95 respirator if stepping outside',
-            'Keep bedroom sealed with 4+ ACH air cleaner',
-            'Postpone cardio exercise to midday',
-          ],
-        };
-        dispatch({ type: 'ADD_CHAT_MESSAGE', payload: fallbackMsg });
-        setErrorMessage(err instanceof Error ? err.message : 'Notice: Using local resilient intelligence engine');
+        setErrorMessage(
+          err instanceof Error ? err.message : 'GenAI query failed. Please verify API configuration.'
+        );
       } finally {
         setIsPending(false);
       }

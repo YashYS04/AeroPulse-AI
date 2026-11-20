@@ -46,7 +46,7 @@ During severe winter smog episodes and industrial stagnation events, urban popul
 
 ### 3.1 Interactive GenAI Conversational Copilot (REQ-03)
 - **Problem Statement Need:** *"Create a GenAI-powered assistant that helps families and communities..."*
-- **Implementation:** Unlike static form apps, `AirQualityCopilot.tsx` provides a conversational interface powered by Google Gemini and backed by an offline heuristic fallback engine. Families can ask direct questions ("Can my asthmatic child go to soccer practice today?", "How do I build a Corsi-Rosenthal box under $45?").
+- **Implementation:** Unlike static form apps, `AirQualityCopilot.tsx` provides a conversational interface powered directly and purely by Google Gemini 3.5 Flash Lite. Families can ask direct questions ("Can my asthmatic child go to soccer practice today?", "How do I build a Corsi-Rosenthal box under $45?").
 - **Verification:** Tested in `src/test/api.test.ts` and `src/test/dom.test.tsx`.
 
 ### 3.2 Quantified Direct Impact Explainer (REQ-06)

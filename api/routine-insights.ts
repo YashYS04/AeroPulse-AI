@@ -50,56 +50,31 @@ function buildHourlySchedule(persona: string, window: string): RoutineHour[] {
   });
 }
 
-function buildHeuristicRoutine(persona: string, zoneId: string): RoutineInsight {
-  return {
-    persona: persona as RoutineInsight['persona'],
-    zoneId,
-    generatedAt: new Date().toLocaleTimeString(),
-    optimalOutdoorWindow: '1:00 PM – 4:00 PM (Solar Convection Lift)',
-    hourByHour: buildHourlySchedule(persona, '1:00 PM – 4:00 PM'),
-    clinicalRationale: `For ${persona}, ground-level soot inhalation during cold morning inversions irritates bronchial tissues. Midday shifts decrease inhaled particulate mass by over 70%.`,
-    sustainableBehaviorAlternatives: [
-      'Switch commute from open diesel three-wheelers to underground metro',
-      'Run Corsi-Rosenthal DIY box during morning inversion peak',
-      'Postpone high-ventilation workouts until midday',
-    ],
-    projectedExposureReductionPercent: 74,
-    isFallback: true,
-  };
-}
-
 async function fetchGeminiRoutine(
   genAI: GoogleGenerativeAI,
   persona: string,
   zoneId: string
-): Promise<RoutineInsight | null> {
-  try {
-    const modelName = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
-    const model = genAI.getGenerativeModel({ model: modelName });
-    const prompt = `Clinical atmospheric health AI. Persona: "${persona}", Zone: "${zoneId}".
+): Promise<RoutineInsight> {
+  const modelName = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  const model = genAI.getGenerativeModel({ model: modelName });
+  const prompt = `Clinical atmospheric health AI. Persona: "${persona}", Zone: "${zoneId}".
 Return JSON only:
 {"optimalOutdoorWindow":"1:00 PM – 4:00 PM","clinicalRationale":"Alveolar soot mitigation via solar boundary convection.","sustainableBehaviorAlternatives":["Shift errand timing","Use HEPA 4 ACH","Metro travel"],"projectedExposureReductionPercent":74}`;
-    const res = await model.generateContent(prompt);
-    const text = res.response.text();
-    const match = text.match(/\{[\s\S]*\}/);
-    const parsed = match ? JSON.parse(match[0]) : JSON.parse(text);
-    const window = parsed.optimalOutdoorWindow || '1:00 PM – 4:00 PM';
-    return {
-      persona: persona as RoutineInsight['persona'],
-      zoneId,
-      generatedAt: new Date().toLocaleTimeString(),
-      optimalOutdoorWindow: window,
-      hourByHour: buildHourlySchedule(persona, window),
-      clinicalRationale: parsed.clinicalRationale || 'Midday convection reduces alveolar particulate load.',
-      sustainableBehaviorAlternatives: parsed.sustainableBehaviorAlternatives || ['Shift outdoor tasks', 'Filter indoor air'],
-      projectedExposureReductionPercent: Number(parsed.projectedExposureReductionPercent) || 74,
-      isFallback: false,
-    };
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.warn('⚠️ Gemini routine error, using fallback:', err instanceof Error ? err.message : err);
-    return null;
-  }
+  const res = await model.generateContent(prompt);
+  const text = res.response.text();
+  const match = text.match(/\{[\s\S]*\}/);
+  const parsed = match ? JSON.parse(match[0]) : JSON.parse(text);
+  const window = parsed.optimalOutdoorWindow || '1:00 PM – 4:00 PM';
+  return {
+    persona: persona as RoutineInsight['persona'],
+    zoneId,
+    generatedAt: new Date().toLocaleTimeString(),
+    optimalOutdoorWindow: window,
+    hourByHour: buildHourlySchedule(persona, window),
+    clinicalRationale: parsed.clinicalRationale || 'Midday convection reduces alveolar particulate load.',
+    sustainableBehaviorAlternatives: parsed.sustainableBehaviorAlternatives || ['Shift outdoor tasks', 'Filter indoor air'],
+    projectedExposureReductionPercent: Number(parsed.projectedExposureReductionPercent) || 74,
+  };
 }
 
 async function readJsonBody(req: IncomingMessage & { body?: unknown }): Promise<Record<string, unknown>> {
@@ -131,8 +106,10 @@ async function executeRoutineLogic(persona: string, zoneId: string): Promise<Rou
   if (entry && entry.expiresAt > Date.now()) return entry.data;
 
   const genAI = getGenAI();
-  const live = genAI ? await fetchGeminiRoutine(genAI, persona, zoneId) : null;
-  const result = live || buildHeuristicRoutine(persona, zoneId);
+  if (!genAI) {
+    throw new Error('GEMINI_API_KEY is not configured on the server.');
+  }
+  const result = await fetchGeminiRoutine(genAI, persona, zoneId);
   cache.set(cacheKey, { data: result, expiresAt: Date.now() + 10 * 60 * 1000 });
   return result;
 }

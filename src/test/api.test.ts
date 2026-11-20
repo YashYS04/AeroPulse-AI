@@ -3,7 +3,34 @@
 // Live Backend Gateway, Type Guards, Cache & Security Verification
 // ============================================================
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+vi.mock('@google/generative-ai', () => ({
+  GoogleGenerativeAI: vi.fn().mockImplementation(() => ({
+    getGenerativeModel: vi.fn().mockReturnValue({
+      generateContent: vi.fn().mockImplementation(async (prompt: string) => {
+        if (typeof prompt === 'string' && prompt.includes('User Question:')) {
+          return {
+            response: {
+              text: () => 'Equip fitted N95 respirator outdoors. Shift exercise to midday convection window.',
+            },
+          };
+        }
+        return {
+          response: {
+            text: () =>
+              JSON.stringify({
+                optimalOutdoorWindow: '1:00 PM – 4:00 PM',
+                clinicalRationale: 'Midday solar convection breaks the surface inversion cap.',
+                sustainableBehaviorAlternatives: ['Shift outdoor errands', 'Use HEPA filtration', 'Use subway'],
+                projectedExposureReductionPercent: 74,
+              }),
+          },
+        };
+      }),
+    }),
+  })),
+}));
 import {
   validateZoneId,
   validatePersona,
@@ -75,7 +102,7 @@ describe('In-Memory SHA-256 LRU Caching Performance', () => {
   });
 });
 
-describe('GenAI Gateway & Resilient Heuristics', () => {
+describe('GenAI Gateway & Core Intelligence Engine', () => {
   it('generates structured routine insights with hour-by-hour schedule', async () => {
     const result = await generateRoutineWithAI(
       VulnerabilityPersona.AsthmaticChild,

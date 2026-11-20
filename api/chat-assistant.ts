@@ -33,19 +33,13 @@ async function fetchGeminiText(
   genAI: GoogleGenerativeAI,
   prompt: string,
   ctx: AssistantPersonaContext
-): Promise<string | null> {
-  try {
-    const modelName = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
-    const model = genAI.getGenerativeModel({ model: modelName });
-    const sys = `You are AeroPulse AI Copilot advising ${ctx.persona} in ${ctx.zoneId} during winter smog (Current AQI: ${ctx.currentAqi}, Inversion: ${ctx.isInversionActive ? 'Active' : 'None'}).
+): Promise<string> {
+  const modelName = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  const model = genAI.getGenerativeModel({ model: modelName });
+  const sys = `You are AeroPulse AI Copilot advising ${ctx.persona} in ${ctx.zoneId} during winter smog (Current AQI: ${ctx.currentAqi}, Inversion: ${ctx.isInversionActive ? 'Active' : 'None'}).
 Give compassionate, clinical, actionable air safety guidance under 55 words. Mention optimal outdoor hours and indoor CADR.`;
-    const res = await model.generateContent(`${sys}\nUser Question: ${prompt}`);
-    return res.response.text().trim();
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.warn('⚠️ Gemini chat failed, using fallback:', err instanceof Error ? err.message : err);
-    return null;
-  }
+  const res = await model.generateContent(`${sys}\nUser Question: ${prompt}`);
+  return res.response.text().trim();
 }
 
 function buildResponse(content: string, ctx: AssistantPersonaContext): AssistantMessage {
@@ -98,9 +92,11 @@ async function executeChatLogic(
   if (entry && entry.expiresAt > Date.now()) return entry.data;
 
   const genAI = getGenAI();
-  const text = genAI ? await fetchGeminiText(genAI, prompt, ctx) : null;
-  const fallbackText = `For ${ctx.persona || 'Residents'} in ${ctx.zoneId || 'urban areas'} (AQI ${ctx.currentAqi || 280}): During winter smog inversions, stay indoors between 6:00 AM – 10:30 AM. Seal doors and run DIY or HEPA filtration (target 4 ACH). Conduct outdoor commutes and errands between 1:00 PM – 4:00 PM when solar convection opens the boundary lid.`;
-  const result = buildResponse(text || fallbackText, ctx);
+  if (!genAI) {
+    throw new Error('GEMINI_API_KEY is not configured on the server.');
+  }
+  const text = await fetchGeminiText(genAI, prompt, ctx);
+  const result = buildResponse(text, ctx);
   cache.set(cacheKey, { data: result, expiresAt: Date.now() + 10 * 60 * 1000 });
   return result;
 }

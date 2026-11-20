@@ -34,7 +34,7 @@ src/
 └── types/               # Centralized domain interfaces, enums, & discriminated unions
 
 server/                  # Express 5 gateway modules
-├── aiService.ts         # Gemini 3.1 Flash Lite + Heuristic fallback engine
+├── aiService.ts         # Pure Google Gemini 3.5 Flash Lite GenAI engine
 ├── cache.ts             # In-memory SHA-256 LRU cache
 ├── middleware.ts        # Helmet CSP, CORS allowlist, rate limiting, safe errors
 └── validators.ts        # Type guards and input sanitization

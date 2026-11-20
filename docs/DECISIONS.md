@@ -37,8 +37,8 @@
   - Color independence: AQI levels communicated with numeric values, text descriptions, and icons, never color alone.
   - Multilingual support: Dynamic bidirectional rendering for English, Hindi, Mandarin, and Arabic (RTL).
 
-## ADR 006: Gemini Flash + Resilient Offline Heuristic Gateway
-- **Context**: Rapid response times with resilience against quota limits or network interruptions.
+## ADR 006: Pure Google Gemini 3.5 Flash Lite GenAI Architecture
+- **Context**: Rapid response times with authentic generative clinical intelligence.
 - **Decision**:
-  - Primary: Google Gemini model for personalized lifestyle routines and conversational copilot advice.
-  - Fallback: Deterministic scientific heuristic engine immediately triggered if external network or API key is absent, ensuring 100% service uptime.
+  - Primary: Google Gemini 3.5 Flash Lite (`gemini-3.5-flash-lite`) generates customized clinical advice, hour-by-hour schedules, and impact metrics.
+  - Verification: Live end-to-end API integration with zero synthetic fallback scripts.

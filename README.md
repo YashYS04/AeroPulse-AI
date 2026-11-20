@@ -64,8 +64,8 @@ AeroPulse AI is an enterprise-grade public health and environmental resilience p
 │                   │ (Cache Miss)      │
 │                   ▼                   │
 │   ┌───────────────────────────────┐   │
-│   │ Google Gemini Flash + Fallback│   │
-│   │ (Server-Side Execution Only)  │   │
+│   │ Google Gemini 3.5 Flash Lite  │   │
+│   │ (Pure Server-Side GenAI)      │   │
 │   └───────────────────────────────┘   │
 └───────────────────────────────────────┘
 ```
@@ -209,7 +209,7 @@ npm run build
 2. **Meteorological Sensors:** Assumed ground-level and upper-boundary temperature and wind anemometer readings are available to calculate thermal inversion lapse rates.
 3. **Breathing Ventilation Rates:** Assumed resting respiration of 0.35–0.55 m³/h for infants/elderly, 0.85–1.1 m³/h for active adults, and 2.2 m³/h for outdoor cycling.
 4. **Filtration Efficiencies:** Assumed 85% for modern underground rail, 90% for sealed automotive HEPA cabins, and 0% for unshielded pedestrians.
-5. **Gemini API Resilience:** If the Gemini API key is omitted or external quota is reached, `server.ts` seamlessly serves pre-computed high-fidelity heuristic routines, ensuring 100% operational uptime.
+5. **Pure GenAI Architecture:** The co-pilot chat and daily routine optimizer are powered 100% by Google Gemini 3.5 Flash Lite (`gemini-3.5-flash-lite`) without synthetic fallback scripts.
 
 ---
 
