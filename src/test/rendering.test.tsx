@@ -4,7 +4,7 @@
 // ============================================================
 
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import React from 'react';
 import { AppProvider } from '@/context/AppContext';
 import App from '@/App';
@@ -40,8 +40,10 @@ describe('Component Landmarks & Accessibility Rendering', () => {
     expect(screen.getByRole('button', { name: /send/i })).toBeInTheDocument();
   });
 
-  it('renders DailyRoutineOptimizer with persona profiles', () => {
-    renderWithContext(<DailyRoutineOptimizer />);
+  it('renders DailyRoutineOptimizer with persona profiles', async () => {
+    await act(async () => {
+      renderWithContext(<DailyRoutineOptimizer />);
+    });
     expect(screen.getByText(/asthmatic child/i)).toBeInTheDocument();
     expect(screen.getByText(/genai daily routine & exposure optimizer/i)).toBeInTheDocument();
   });

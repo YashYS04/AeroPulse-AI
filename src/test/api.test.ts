@@ -44,6 +44,8 @@ import {
 import { aiResponseCache, Sha256LruCache } from '../../server/cache';
 import { VulnerabilityPersona } from '../types/routine';
 
+process.env.GEMINI_API_KEY = 'test-mock-gemini-key';
+
 describe('Server Parameter Validation & Type Guards', () => {
   it('validates allowed urban zones and rejects unknown zones', () => {
     expect(validateZoneId('zone-cbd')).toBe('zone-cbd');

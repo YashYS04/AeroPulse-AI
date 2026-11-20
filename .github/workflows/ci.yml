@@ -29,6 +29,8 @@ jobs:
 
       - name: Run Automated Test Suites
         run: npm run test:run
+        env:
+          GEMINI_API_KEY: 'test-ci-key'
 
       - name: Run Production TypeScript & Vite Build
         run: npm run build
