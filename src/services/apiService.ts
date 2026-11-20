@@ -6,7 +6,9 @@
 import { RoutineInsight, VulnerabilityPersona } from '@/types/routine';
 import { AssistantMessage, AssistantPersonaContext } from '@/types/assistant';
 
-const BASE_URL = import.meta.env?.VITE_API_BASE_URL || '';
+const BASE_URL = import.meta.env.PROD
+  ? ''
+  : (import.meta.env.VITE_API_BASE_URL || '');
 
 export async function fetchRoutineInsights(
   persona: VulnerabilityPersona,
