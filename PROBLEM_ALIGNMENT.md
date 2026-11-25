@@ -1,8 +1,8 @@
 # Problem Statement Alignment & Requirements Traceability Matrix (RTM) — AeroPulse AI
 
-> **Standard:** 100% Traceability and Operational Fidelity (Score: 100/100)  
-> **Evaluation Pillar:** Problem Statement Alignment (High Impact)  
-> **Challenge:** Urban Air Quality Assistant  
+> **Standard:** 100% Traceability and Operational Fidelity (Score: 100/100)
+> **Evaluation Pillar:** Problem Statement Alignment (High Impact)
+> **Challenge:** Urban Air Quality Assistant
 
 ---
 

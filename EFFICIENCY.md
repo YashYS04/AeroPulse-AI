@@ -1,8 +1,8 @@
 # Efficiency & Performance Engineering — AeroPulse AI
 
-> **Standard:** Maximum Throughput with Sub-10ms Response & Minimal Footprint (Score: 100/100)  
-> **Evaluation Pillar:** Efficiency (Medium Impact)  
-> **Repository:** AeroPulse AI — Urban Air Quality & Smog Resilience Assistant  
+> **Standard:** Maximum Throughput with Sub-10ms Response & Minimal Footprint (Score: 100/100)
+> **Evaluation Pillar:** Efficiency (Medium Impact)
+> **Repository:** AeroPulse AI — Urban Air Quality & Smog Resilience Assistant
 
 ---
 

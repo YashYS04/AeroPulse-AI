@@ -1,8 +1,8 @@
 # Accessibility Architecture & WCAG 2.2 Manifest — AeroPulse AI
 
-> **Standard:** WCAG 2.2 Level AA / AAA Compliant (Score: 100/100)  
-> **Evaluation Pillar:** Accessibility (Low Impact)  
-> **Repository:** AeroPulse AI — Urban Air Quality & Smog Resilience Assistant  
+> **Standard:** WCAG 2.2 Level AA / AAA Compliant (Score: 100/100)
+> **Evaluation Pillar:** Accessibility (Low Impact)
+> **Repository:** AeroPulse AI — Urban Air Quality & Smog Resilience Assistant
 
 ---
 

@@ -57,7 +57,7 @@ export const PledgeCard: React.FC<PledgeCardProps> = React.memo(({ pledge, onTog
           className={`w-full py-2.5 rounded-xl text-xs font-bold transition-all focus-visible:outline-2 focus-visible:outline-emerald-400 ${
             pledge.isUserJoined
               ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow'
-              : 'bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700'
+              : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
           }`}
         >
           {pledge.isUserJoined ? '✓ Pledged with Community' : '+ Join Neighborhood Pledge'}

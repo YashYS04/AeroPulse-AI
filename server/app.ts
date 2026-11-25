@@ -16,31 +16,29 @@ import {
   validateZoneId,
   validatePersona,
   validatePrompt,
+  validateChatContext,
 } from './validators.js';
 import {
   generateRoutineWithAI,
   generateChatResponseWithAI,
 } from './aiService.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
+const JSON_PAYLOAD_LIMIT = '15kb';
 
 export const app = express();
 
-// Defensive Middleware Pipeline
 app.use(helmetSecurity);
 app.use(corsSecurity);
-app.use(express.json({ limit: '15kb' })); // Mitigate memory exhaustion
+app.use(express.json({ limit: JSON_PAYLOAD_LIMIT }));
 
-// Route normalization for serverless environments (e.g. Vercel)
 app.use((req, _res, next) => {
   if (!req.url.startsWith('/api') && req.url !== '/' && !req.url.startsWith('/assets')) {
-    req.url = '/api' + req.url;
+    req.url = `/api${req.url}`;
   }
   next();
 });
 
-// Health Check
 app.get(['/api/health', '/health'], (_req, res) => {
   res.json({
     status: 'ok',
@@ -50,7 +48,6 @@ app.get(['/api/health', '/health'], (_req, res) => {
   });
 });
 
-// GenAI Routine Optimization Endpoint
 app.post(['/api/routine-insights', '/routine-insights'], apiRateLimiter, async (req, res, next) => {
   try {
     const zoneId = validateZoneId(req.body.zoneId);
@@ -62,17 +59,10 @@ app.post(['/api/routine-insights', '/routine-insights'], apiRateLimiter, async (
   }
 });
 
-// Interactive Conversational Assistant Endpoint
 app.post(['/api/chat-assistant', '/chat-assistant'], apiRateLimiter, async (req, res, next) => {
   try {
     const prompt = validatePrompt(req.body.prompt);
-    const context = req.body.context || {
-      persona: 'Asthmatic Child',
-      zoneId: 'zone-cbd',
-      currentAqi: 284,
-      isInversionActive: true,
-      hasAirPurifier: true,
-    };
+    const context = validateChatContext(req.body.context);
     const response = await generateChatResponseWithAI(prompt, context);
     res.json(response);
   } catch (err) {
@@ -80,14 +70,12 @@ app.post(['/api/chat-assistant', '/chat-assistant'], apiRateLimiter, async (req,
   }
 });
 
-// Static files in production standalone mode
 if (process.env.NODE_ENV === 'production') {
-  const distPath = path.join(__dirname, '..', 'dist');
+  const distPath = path.join(currentDir, '..', 'dist');
   app.use(express.static(distPath));
   app.get('{*splat}', (_req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 }
 
-// Global Defensive Error Handler (CWE-209 safe)
 app.use(globalErrorHandler);

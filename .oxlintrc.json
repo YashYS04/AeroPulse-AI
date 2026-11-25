@@ -6,6 +6,8 @@
   },
   "rules": {
     "no-unused-vars": "error",
-    "no-explicit-any": "error"
+    "no-explicit-any": "error",
+    "react/rules-of-hooks": "error",
+    "react/no-array-index-key": "error"
   }
 }

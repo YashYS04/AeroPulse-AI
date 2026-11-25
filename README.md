@@ -75,7 +75,7 @@ AeroPulse AI is an enterprise-grade public health and environmental resilience p
 ## 1. Chosen Vertical
 
 ### Selected Problem Domain
-**Urban Air Quality, Public Health Resilience, and Environmental Justice.**  
+**Urban Air Quality, Public Health Resilience, and Environmental Justice.**
 Megacities routinely suffer severe winter smog episodes where ground-level particulate matter (PM2.5) exceeds WHO safe thresholds by 15× to 30×.
 
 ### Core Problems Addressed

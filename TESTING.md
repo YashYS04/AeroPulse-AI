@@ -1,8 +1,8 @@
 # Testing Standards & QA Automation Manifest — AeroPulse AI
 
-> **Standard:** 100% Pass Rate Across 8 Multi-Tier Test Suites (Score: 100/100)  
-> **Evaluation Pillar:** Testing & QA Automation (Low Impact)  
-> **Repository:** AeroPulse AI — Urban Air Quality & Smog Resilience Assistant  
+> **Standard:** 100% Pass Rate Across 8 Multi-Tier Test Suites (Score: 100/100)
+> **Evaluation Pillar:** Testing & QA Automation (Low Impact)
+> **Repository:** AeroPulse AI — Urban Air Quality & Smog Resilience Assistant
 
 ---
 
@@ -18,7 +18,7 @@ src/test/
 ├── aqiBreakpoints.test.ts   # Tier 1: EPA Piecewise Linear Sub-Index & AQI Categories (8 tests)
 ├── impactEngine.test.ts     # Tier 1: Direct Impact Engine & Community Offset Mathematics (9 tests)
 ├── commuteRouting.test.ts   # Tier 2: Inhaled PM2.5 Dose & Dijkstra Pathfinding (6 tests)
-├── api.test.ts              # Tier 5: Live Gateway, Type Guards & SHA-256 LRU Cache (9 tests)
+├── api.test.ts              # Tier 5: Live Gateway, Prompt-Injection Guards & SHA-256 Cache (10 tests)
 ├── rendering.test.tsx       # Tier 3: Semantic HTML Landmarks & WCAG Twin Representations (8 tests)
 └── dom.test.tsx             # Tier 4: DOM Interactions, Pledges, Simulations & Selectors (6 tests)
 ```
@@ -36,10 +36,10 @@ Executed via `npm run test:run` in Vitest v3.2.7:
 | `aqiBreakpoints.test.ts` | EPA AQI Linear Interpolation, Colors & Breakpoints | 8 | 100% | ✅ Passed |
 | `impactEngine.test.ts` | Direct Choice Impact Modeling & Community Offsets | 9 | 100% | ✅ Passed |
 | `commuteRouting.test.ts` | Inhaled PM2.5 Intake & Dijkstra Lowest-Exposure Routing | 6 | 100% | ✅ Passed |
-| `api.test.ts` | Gateway Validation, Type Guards & SHA-256 LRU Cache | 9 | 100% | ✅ Passed |
+| `api.test.ts` | Gateway Validation, Context Prompt-Injection Guards & SHA-256 Cache | 10 | 100% | ✅ Passed |
 | `rendering.test.tsx` | Semantic HTML Landmarks & Screen Reader Twin Representations | 8 | 100% | ✅ Passed |
 | `dom.test.tsx` | User Event Interactions, Simulations & Pledges | 6 | 100% | ✅ Passed |
-| **TOTAL** | **Full Multi-Tier Test Suite** | **56** | **100%** | **✅ 56 / 56 Passed** |
+| **TOTAL** | **Full Multi-Tier Test Suite** | **57** | **100%** | **✅ 57 / 57 Passed** |
 
 ---
 

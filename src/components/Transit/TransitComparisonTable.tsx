@@ -36,7 +36,7 @@ export const TransitComparisonTable: React.FC<TransitComparisonTableProps> = Rea
               <th className="py-2.5 px-3">Advisory</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-850">
+          <tbody className="divide-y divide-slate-800">
             {options.map((opt) => {
               const tierBadge = {
                 Optimal: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
@@ -46,7 +46,7 @@ export const TransitComparisonTable: React.FC<TransitComparisonTableProps> = Rea
               }[opt.relativeSafetyTier];
 
               return (
-                <tr key={opt.mode} className="hover:bg-slate-850/50 transition-colors">
+                <tr key={opt.mode} className="hover:bg-slate-800/50 transition-colors">
                   <td className="py-3 px-3 font-bold text-white whitespace-nowrap">{opt.mode}</td>
                   <td className="py-3 px-3 text-slate-300">{opt.durationMinutes} mins</td>
                   <td className="py-3 px-3 font-extrabold text-slate-100">

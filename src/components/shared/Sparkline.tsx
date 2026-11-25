@@ -59,7 +59,7 @@ export const Sparkline: React.FC<SparklineProps> = React.memo(({
           const cy = height - padding - ((val - min) / range) * effH;
           return (
             <circle
-              key={idx}
+              key={`dot-${data.length - idx}-${val}`}
               cx={cx}
               cy={cy}
               r={idx === data.length - 1 ? 3 : 1.5}
@@ -73,7 +73,7 @@ export const Sparkline: React.FC<SparklineProps> = React.memo(({
         <p>{label} historical hourly trend:</p>
         <ol>
           {data.map((val, idx) => (
-            <li key={idx}>
+            <li key={`hr-${data.length - idx}`}>
               Hour -{data.length - idx}h: {val}
             </li>
           ))}

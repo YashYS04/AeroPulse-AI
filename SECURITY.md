@@ -1,8 +1,8 @@
 # Security Architecture & OWASP Defense Blueprint — AeroPulse AI
 
-> **Standard:** Zero-Trust Defense-in-Depth (Score: 100/100)  
-> **Evaluation Pillar:** Security (Medium Impact)  
-> **Repository:** AeroPulse AI — Urban Air Quality & Smog Resilience Assistant  
+> **Standard:** Zero-Trust Defense-in-Depth (Score: 100/100)
+> **Evaluation Pillar:** Security (Medium Impact)
+> **Repository:** AeroPulse AI — Urban Air Quality & Smog Resilience Assistant
 
 ---
 

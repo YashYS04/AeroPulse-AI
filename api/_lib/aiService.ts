@@ -14,6 +14,15 @@ import { aiResponseCache } from './cache.js';
 const DEFAULT_MODEL = 'gemini-3.5-flash-lite';
 const DEFAULT_OUTDOOR_WINDOW = '1:00 PM – 4:00 PM';
 const SCHEDULE_HOURS = [0, 4, 8, 12, 16, 20];
+const SAFE_WINDOW_START_HOUR = 12;
+const SAFE_WINDOW_END_HOUR = 16;
+const SAFE_WINDOW_PREDICTED_AQI = 110;
+const STAGNANT_PREDICTED_AQI = 280;
+const DEFAULT_EXPOSURE_REDUCTION_PCT = 74;
+const DEFAULT_CO2_SAVED_KG = 1.4;
+const DEFAULT_CHAT_RISK_DROP_PCT = 72;
+const PM25_AVERSION_RATIO = 0.55;
+const FALLBACK_AQI_BASELINE = 250;
 const DEFAULT_FOLLOWUPS = [
   'What CADR is required for my child room?',
   'How to assemble a Corsi-Rosenthal box under $45?',
@@ -36,11 +45,11 @@ function parseGeminiJson(text: string): Record<string, unknown> {
 
 function buildHourlySchedule(persona: VulnerabilityPersona, window: string): RoutineHour[] {
   return SCHEDULE_HOURS.map((hour) => {
-    const isSafe = hour >= 12 && hour <= 16;
+    const isSafe = hour >= SAFE_WINDOW_START_HOUR && hour <= SAFE_WINDOW_END_HOUR;
     return {
       hour,
       label: `${String(hour).padStart(2, '0')}:00`,
-      predictedAqi: isSafe ? 110 : 280,
+      predictedAqi: isSafe ? SAFE_WINDOW_PREDICTED_AQI : STAGNANT_PREDICTED_AQI,
       activityRecommendation: isSafe
         ? `Midday Convection Window (${window}) — Safe for ${persona} outdoor errands.`
         : 'Stagnant boundary layer — Keep indoors with active HEPA/Corsi box.',
@@ -59,7 +68,7 @@ async function fetchGeminiRoutine(
   const model = genAI.getGenerativeModel({ model: getModelName() });
   const prompt = `You are a clinical atmospheric health AI. Persona: "${persona}", Zone: "${zoneId}".
 Return JSON only:
-{"optimalOutdoorWindow":"${DEFAULT_OUTDOOR_WINDOW}","clinicalRationale":"Brief 1-2 sentence medical explanation of alveolar particulate deposition.","sustainableBehaviorAlternatives":["Shift errand timing","Use HEPA 4 ACH","Metro travel"],"projectedExposureReductionPercent":74}`;
+{"optimalOutdoorWindow":"${DEFAULT_OUTDOOR_WINDOW}","clinicalRationale":"Brief 1-2 sentence medical explanation of alveolar particulate deposition.","sustainableBehaviorAlternatives":["Shift errand timing","Use HEPA 4 ACH","Metro travel"],"projectedExposureReductionPercent":${DEFAULT_EXPOSURE_REDUCTION_PCT}}`;
 
   const res = await model.generateContent(prompt);
   const parsed = parseGeminiJson(res.response.text());
@@ -74,7 +83,8 @@ Return JSON only:
     clinicalRationale: (parsed.clinicalRationale as string) || 'Midday convection reduces bronchial deposition.',
     sustainableBehaviorAlternatives:
       (parsed.sustainableBehaviorAlternatives as string[]) || ['Shift outdoor tasks', 'Use HEPA filtration'],
-    projectedExposureReductionPercent: Number(parsed.projectedExposureReductionPercent) || 74,
+    projectedExposureReductionPercent:
+      Number(parsed.projectedExposureReductionPercent) || DEFAULT_EXPOSURE_REDUCTION_PCT,
   };
 }
 
@@ -117,9 +127,9 @@ function buildChatResult(content: string, context: AssistantPersonaContext): Ass
     content,
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     directImpactSummary: {
-      pm25AvertedMicrograms: Math.round((context.currentAqi || 250) * 0.55),
-      co2AvertedKg: 1.4,
-      riskReductionPercent: 72,
+      pm25AvertedMicrograms: Math.round((context.currentAqi || FALLBACK_AQI_BASELINE) * PM25_AVERSION_RATIO),
+      co2AvertedKg: DEFAULT_CO2_SAVED_KG,
+      riskReductionPercent: DEFAULT_CHAT_RISK_DROP_PCT,
     },
     suggestedPromptFollowups: DEFAULT_FOLLOWUPS,
   };

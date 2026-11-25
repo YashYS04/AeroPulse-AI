@@ -7,6 +7,7 @@ import { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
+import { ValidationError } from './validators.js';
 
 export const helmetSecurity = helmet({
   contentSecurityPolicy: {
@@ -50,7 +51,10 @@ export function globalErrorHandler(
   res: Response,
   _next: NextFunction
 ): void {
-  // Prevent stack trace leakage (CWE-209 mitigation)
-  const message = err instanceof Error ? err.message : 'Internal Server Error';
-  res.status(400).json({ error: message });
+  // Prevent stack trace and internal upstream error leakage (CWE-209 mitigation)
+  if (err instanceof ValidationError) {
+    res.status(400).json({ error: err.message });
+    return;
+  }
+  res.status(502).json({ error: 'GenAI gateway temporarily unavailable.' });
 }

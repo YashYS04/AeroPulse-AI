@@ -47,8 +47,8 @@ export const DIYHackGrid: React.FC = React.memo(() => {
               <div className="text-xs text-slate-300">
                 <span className="font-bold text-slate-200 block mb-1">Key Materials:</span>
                 <ul className="list-disc list-inside space-y-0.5 text-[11px] text-slate-400">
-                  {hack.materialsNeeded.slice(0, 3).map((mat, i) => (
-                    <li key={i}>{mat}</li>
+                  {hack.materialsNeeded.slice(0, 3).map((mat) => (
+                    <li key={mat}>{mat}</li>
                   ))}
                 </ul>
               </div>

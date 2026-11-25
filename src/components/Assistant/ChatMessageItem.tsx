@@ -51,8 +51,8 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo(({
 
         {message.recommendedActions && (
           <ul className="mt-2 space-y-1 text-xs text-slate-300 list-disc list-inside">
-            {message.recommendedActions.map((act, i) => (
-              <li key={i}>{act}</li>
+            {message.recommendedActions.map((act) => (
+              <li key={act}>{act}</li>
             ))}
           </ul>
         )}
@@ -60,9 +60,9 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = React.memo(({
 
       {!isUser && message.suggestedPromptFollowups && (
         <div className="flex flex-wrap gap-1.5 mt-2 max-w-2xl">
-          {message.suggestedPromptFollowups.map((chip, idx) => (
+          {message.suggestedPromptFollowups.map((chip) => (
             <button
-              key={idx}
+              key={chip}
               type="button"
               onClick={() => onSelectFollowup(chip)}
               className="text-[11px] px-2.5 py-1 rounded-full bg-slate-800/90 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 transition-all focus-visible:outline-2 focus-visible:outline-emerald-400"

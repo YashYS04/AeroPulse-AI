@@ -4,8 +4,10 @@
 // ============================================================
 
 export {
+  ValidationError,
   sanitizeText,
   validateZoneId,
   validatePersona,
   validatePrompt,
+  validateChatContext,
 } from '../api/_lib/validators.js';

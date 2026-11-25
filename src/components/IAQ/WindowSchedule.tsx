@@ -19,13 +19,13 @@ export const WindowSchedule: React.FC = React.memo(() => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {WINDOW_VENTILATION_TIMETABLE.map((slot, idx) => {
+        {WINDOW_VENTILATION_TIMETABLE.map((slot) => {
           const isSafe = slot.status === 'Safe Full Flush';
           const isStrict = slot.status === 'Strictly Closed';
 
           return (
             <div
-              key={idx}
+              key={slot.timeWindow}
               className={`p-3.5 rounded-xl border transition-all ${
                 isSafe
                   ? 'bg-emerald-950/40 border-emerald-500/60 ring-1 ring-emerald-500/30'
