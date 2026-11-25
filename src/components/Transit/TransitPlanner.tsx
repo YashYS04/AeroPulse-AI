@@ -5,8 +5,38 @@
 
 import React from 'react';
 import { useExposureRouting } from '@/hooks/useExposureRouting';
+import { TransitNode } from '@/types/transit';
 import { TransitComparisonTable } from './TransitComparisonTable';
 
+interface StationSelectProps {
+  id: string;
+  label: string;
+  value: string;
+  nodes: TransitNode[];
+  onChange: (nodeId: string) => void;
+}
+
+const StationSelect: React.FC<StationSelectProps> = ({ id, label, value, nodes, onChange }) => (
+  <div>
+    <label htmlFor={id} className="text-xs font-semibold text-slate-300 block mb-1">
+      {label}
+    </label>
+    <select
+      id={id}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-xs sm:text-sm rounded-xl p-3 focus-visible:outline-2 focus-visible:outline-emerald-400"
+    >
+      {nodes.map((node) => (
+        <option key={node.id} value={node.id}>
+          {node.name} ({node.sector})
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+/** Interactive clean-corridor commute exposure planner powered by Dijkstra shortest exposure routing. */
 export const TransitPlanner: React.FC = React.memo(() => {
   const {
     nodes,
@@ -29,50 +59,27 @@ export const TransitPlanner: React.FC = React.memo(() => {
         </p>
       </div>
 
-      {/* Origin & Destination Selectors */}
       <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl">
         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
           Configure Commute Corridor
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="start-node-select" className="text-xs font-semibold text-slate-300 block mb-1">
-              Origin Station:
-            </label>
-            <select
-              id="start-node-select"
-              value={startNodeId}
-              onChange={(e) => setStartNodeId(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-750 text-slate-200 text-xs sm:text-sm rounded-xl p-3 focus-visible:outline-2 focus-visible:outline-emerald-400"
-            >
-              {nodes.map((node) => (
-                <option key={node.id} value={node.id}>
-                  {node.name} ({node.sector})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="end-node-select" className="text-xs font-semibold text-slate-300 block mb-1">
-              Destination Station:
-            </label>
-            <select
-              id="end-node-select"
-              value={endNodeId}
-              onChange={(e) => setEndNodeId(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-750 text-slate-200 text-xs sm:text-sm rounded-xl p-3 focus-visible:outline-2 focus-visible:outline-emerald-400"
-            >
-              {nodes.map((node) => (
-                <option key={node.id} value={node.id}>
-                  {node.name} ({node.sector})
-                </option>
-              ))}
-            </select>
-          </div>
+          <StationSelect
+            id="start-node-select"
+            label="Origin Station:"
+            value={startNodeId}
+            nodes={nodes}
+            onChange={setStartNodeId}
+          />
+          <StationSelect
+            id="end-node-select"
+            label="Destination Station:"
+            value={endNodeId}
+            nodes={nodes}
+            onChange={setEndNodeId}
+          />
         </div>
 
-        {/* Dijkstra Path Result Banner */}
         {optimalDijkstra && (
           <div className="mt-4 pt-4 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -98,7 +105,6 @@ export const TransitPlanner: React.FC = React.memo(() => {
         )}
       </div>
 
-      {/* Multi-modal table */}
       <TransitComparisonTable options={multiModalComparisons} />
     </section>
   );

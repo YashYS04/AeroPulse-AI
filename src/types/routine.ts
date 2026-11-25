@@ -31,5 +31,4 @@ export interface RoutineInsight {
   clinicalRationale: string;
   sustainableBehaviorAlternatives: string[];
   projectedExposureReductionPercent: number;
-  isFallback?: boolean;
 }

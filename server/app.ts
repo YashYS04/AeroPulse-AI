@@ -11,16 +11,16 @@ import {
   corsSecurity,
   apiRateLimiter,
   globalErrorHandler,
-} from './middleware';
+} from './middleware.js';
 import {
   validateZoneId,
   validatePersona,
   validatePrompt,
-} from './validators';
+} from './validators.js';
 import {
   generateRoutineWithAI,
   generateChatResponseWithAI,
-} from './aiService';
+} from './aiService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

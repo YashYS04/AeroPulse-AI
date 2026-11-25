@@ -6,6 +6,7 @@
 import { InversionStatus } from '@/types/telemetry';
 import { assertFiniteNumber, assertNonNegative } from './asserts';
 
+/** Evaluates ground-level thermal inversion risk from temperature lapse rate and wind speed. */
 export function evaluateInversionRisk(
   temperatureGround: number,
   temperatureCap: number,

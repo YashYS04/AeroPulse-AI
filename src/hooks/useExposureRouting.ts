@@ -13,6 +13,17 @@ import {
 } from '@/lib/compute';
 import { TransitMode, TransitRouteOption } from '@/types/transit';
 
+const ALL_COMMUTE_MODES: readonly TransitMode[] = [
+  TransitMode.UndergroundMetro,
+  TransitMode.ElectricBus,
+  TransitMode.DieselBus,
+  TransitMode.ElectricVehicle,
+  TransitMode.GasolineCar,
+  TransitMode.Cycling,
+  TransitMode.Walking,
+];
+
+/** Computes Dijkstra lowest-exposure transit corridors and multi-modal dose comparisons. */
 export function useExposureRouting() {
   const { activeZone } = useApp();
   const [startNodeId, setStartNodeId] = useState<string>('node-cbd');
@@ -31,17 +42,7 @@ export function useExposureRouting() {
 
   const multiModalComparisons = useMemo<TransitRouteOption[]>(() => {
     const distanceKm = optimalDijkstra?.totalDistanceKm || 8.0;
-    const modes: TransitMode[] = [
-      TransitMode.UndergroundMetro,
-      TransitMode.ElectricBus,
-      TransitMode.DieselBus,
-      TransitMode.ElectricVehicle,
-      TransitMode.GasolineCar,
-      TransitMode.Cycling,
-      TransitMode.Walking,
-    ];
-
-    return modes.map((mode) =>
+    return ALL_COMMUTE_MODES.map((mode) =>
       calculateCommuteMetrics(mode, distanceKm, activeZone.pollutants.pm25)
     );
   }, [optimalDijkstra, activeZone.pollutants.pm25]);

@@ -4,26 +4,16 @@
 // ============================================================
 
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import { applyCorsAndPreflight, sendJson } from './_lib/http.js';
 
+/** Handles GET health checks for the serverless AI gateway. */
 export default function handler(req: IncomingMessage, res: ServerResponse): void {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  if (applyCorsAndPreflight(req, res)) return;
 
-  if (req.method === 'OPTIONS') {
-    res.statusCode = 200;
-    res.end();
-    return;
-  }
-
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.end(
-    JSON.stringify({
-      status: 'ok',
-      service: 'AeroPulse AI Gateway',
-      uptime: Math.round(process.uptime()),
-      timestamp: new Date().toISOString(),
-    })
-  );
+  sendJson(res, 200, {
+    status: 'ok',
+    service: 'AeroPulse AI Gateway',
+    uptime: Math.round(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
 }

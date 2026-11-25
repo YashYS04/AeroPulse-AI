@@ -15,8 +15,20 @@ import { IAQCenter } from '@/components/IAQ/IAQCenter';
 import { TransitPlanner } from '@/components/Transit/TransitPlanner';
 import { CommunityHub } from '@/components/Community/CommunityHub';
 
+const TAB_PANELS: Record<TabId, React.ComponentType> = {
+  [TabId.Dashboard]: AirTelemetryDashboard,
+  [TabId.Assistant]: AirQualityCopilot,
+  [TabId.Routine]: DailyRoutineOptimizer,
+  [TabId.Impact]: DirectImpactExplainer,
+  [TabId.IAQ]: IAQCenter,
+  [TabId.Transit]: TransitPlanner,
+  [TabId.Community]: CommunityHub,
+};
+
+/** Root AeroPulse AI application shell providing accessible header, tab panel, and footer landmarks. */
 export const App: React.FC = () => {
   const { state } = useApp();
+  const ActivePanel = TAB_PANELS[state.currentTab];
 
   return (
     <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-sans">
@@ -33,13 +45,7 @@ export const App: React.FC = () => {
           aria-labelledby={`tab-${state.currentTab}`}
           className="focus-visible:outline-none"
         >
-          {state.currentTab === TabId.Dashboard && <AirTelemetryDashboard />}
-          {state.currentTab === TabId.Assistant && <AirQualityCopilot />}
-          {state.currentTab === TabId.Routine && <DailyRoutineOptimizer />}
-          {state.currentTab === TabId.Impact && <DirectImpactExplainer />}
-          {state.currentTab === TabId.IAQ && <IAQCenter />}
-          {state.currentTab === TabId.Transit && <TransitPlanner />}
-          {state.currentTab === TabId.Community && <CommunityHub />}
+          <ActivePanel />
         </div>
       </main>
 
@@ -47,7 +53,7 @@ export const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span>AeroPulse AI v2.0 • Offline-First Smog Resilience Platform</span>
+            <span>AeroPulse AI v2.0 • Pure GenAI Smog Resilience Platform</span>
           </p>
           <div className="flex items-center gap-4 text-[11px] text-slate-400">
             <span>WCAG 2.2 AA Compliant</span>

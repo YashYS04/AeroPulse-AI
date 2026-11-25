@@ -6,6 +6,7 @@
 import { RoomCADRResult } from '@/types/iaq';
 import { assertPositive } from './asserts';
 
+/** Calculates indoor room air volume in cubic meters. */
 export function calculateRoomVolume(
   lengthMeters: number,
   widthMeters: number,

@@ -6,20 +6,25 @@
 import React from 'react';
 import { useApp } from '@/context/AppContext';
 import { useAirAnalytics } from '@/hooks/useAirAnalytics';
+import { UrbanZone } from '@/types/telemetry';
 import { SmogHeatmap } from './SmogHeatmap';
 import { ZoneCard } from '../shared/ZoneCard';
 
+function buildPollutantReadings(zone: UrbanZone) {
+  return [
+    { label: 'PM2.5', value: zone.pollutants.pm25, unit: 'µg/m³', maxSafe: 15, note: 'Fine Respirable Dust' },
+    { label: 'PM10', value: zone.pollutants.pm10, unit: 'µg/m³', maxSafe: 45, note: 'Coarse Dust & Road Grit' },
+    { label: 'NO2', value: zone.pollutants.no2, unit: 'ppb', maxSafe: 25, note: 'Diesel Engine Exhaust' },
+    { label: 'CO', value: zone.pollutants.co, unit: 'ppm', maxSafe: 4.0, note: 'Incomplete Combustion' },
+    { label: 'O3', value: zone.pollutants.o3, unit: 'ppb', maxSafe: 50, note: 'Photochemical Smog' },
+  ];
+}
+
+/** Primary urban air quality dashboard with live telemetry, inversion physics, and zone selector. */
 export const AirTelemetryDashboard: React.FC = React.memo(() => {
   const { state, dispatch, activeZone } = useApp();
   const { currentAqi, aqiCategory, badgeHexColor, inversion } = useAirAnalytics();
-
-  const pollutants = [
-    { label: 'PM2.5', value: activeZone.pollutants.pm25, unit: 'µg/m³', maxSafe: 15, note: 'Fine Respirable Dust' },
-    { label: 'PM10', value: activeZone.pollutants.pm10, unit: 'µg/m³', maxSafe: 45, note: 'Coarse Dust & Road Grit' },
-    { label: 'NO2', value: activeZone.pollutants.no2, unit: 'ppb', maxSafe: 25, note: 'Diesel Engine Exhaust' },
-    { label: 'CO', value: activeZone.pollutants.co, unit: 'ppm', maxSafe: 4.0, note: 'Incomplete Combustion' },
-    { label: 'O3', value: activeZone.pollutants.o3, unit: 'ppb', maxSafe: 50, note: 'Photochemical Smog' },
-  ];
+  const pollutants = buildPollutantReadings(activeZone);
 
   return (
     <section aria-labelledby="dashboard-heading" className="space-y-6">
@@ -33,7 +38,6 @@ export const AirTelemetryDashboard: React.FC = React.memo(() => {
           </p>
         </div>
 
-        {/* Simulation Controls */}
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
@@ -53,7 +57,7 @@ export const AirTelemetryDashboard: React.FC = React.memo(() => {
             <button
               type="button"
               onClick={() => dispatch({ type: 'RESET_TELEMETRY' })}
-              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-750 focus-visible:outline-2 focus-visible:outline-emerald-400"
+              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 focus-visible:outline-2 focus-visible:outline-emerald-400"
             >
               Reset
             </button>
@@ -61,15 +65,11 @@ export const AirTelemetryDashboard: React.FC = React.memo(() => {
         </div>
       </div>
 
-      {/* Main Stats Row: AQI Hero Card + Atmospheric Inversion Card */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between shadow-xl">
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase font-bold text-slate-400">Selected Sector Status</span>
-            <span
-              className="px-2.5 py-0.5 rounded-full text-xs font-extrabold text-white"
-              style={{ backgroundColor: badgeHexColor }}
-            >
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-extrabold text-white" style={{ backgroundColor: badgeHexColor }}>
               {aqiCategory}
             </span>
           </div>
@@ -86,7 +86,6 @@ export const AirTelemetryDashboard: React.FC = React.memo(() => {
           </div>
         </div>
 
-        {/* Thermal Inversion Analysis Card */}
         <div className="md:col-span-2 bg-slate-900/80 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between shadow-xl">
           <div className="flex items-center justify-between">
             <h3 className="text-xs uppercase font-bold text-slate-400 tracking-wider">
@@ -131,14 +130,12 @@ export const AirTelemetryDashboard: React.FC = React.memo(() => {
         </div>
       </div>
 
-      {/* SVG Spatial Topography */}
       <SmogHeatmap
         zones={state.zones}
         selectedZoneId={state.selectedZoneId}
         onSelectZone={(id) => dispatch({ type: 'SELECT_ZONE', payload: id })}
       />
 
-      {/* Pollutant Breakdown Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {pollutants.map((p) => (
           <div key={p.label} className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 shadow">
@@ -154,7 +151,6 @@ export const AirTelemetryDashboard: React.FC = React.memo(() => {
         ))}
       </div>
 
-      {/* Urban Zones Selection Grid */}
       <div>
         <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">
           Urban Sectors Telemetry Feed

@@ -12,11 +12,19 @@ interface ImpactComparisonCardProps {
   onToggle: (choice: ChoiceImpactDetail) => void;
 }
 
+/** Displays side-by-side conventional vs sustainable action impacts and toggle controls. */
 export const ImpactComparisonCard: React.FC<ImpactComparisonCardProps> = React.memo(({
   choice,
   isActive,
   onToggle,
 }) => {
+  const metrics = [
+    { label: 'PM2.5 Averted', value: `${choice.pm25InhaledAvertedUg} µg`, colorClass: 'text-emerald-400' },
+    { label: 'Alveolar Relief', value: `-${choice.alveolarDepositionRiskDropPercent}%`, colorClass: 'text-blue-400' },
+    { label: 'CO₂ Saved', value: `${choice.co2SavedKg} kg`, colorClass: 'text-teal-400' },
+    { label: 'Financial Saving', value: `$${choice.moneySavedCurrency}`, colorClass: 'text-amber-300' },
+  ];
+
   return (
     <div
       className={`p-5 rounded-2xl border transition-all duration-200 ${
@@ -38,14 +46,13 @@ export const ImpactComparisonCard: React.FC<ImpactComparisonCardProps> = React.m
           className={`px-3 py-1 rounded-lg text-xs font-bold transition-all focus-visible:outline-2 focus-visible:outline-emerald-400 ${
             isActive
               ? 'bg-emerald-500 text-slate-950 shadow'
-              : 'bg-slate-800 hover:bg-slate-750 text-slate-300 border border-slate-700'
+              : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
           }`}
         >
           {isActive ? '✓ Active Choice' : '+ Adopt Choice'}
         </button>
       </div>
 
-      {/* Side-by-Side Comparison Panels */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
         <div className="p-3 rounded-xl bg-rose-950/20 border border-rose-900/40 text-xs">
           <span className="text-rose-400 font-bold block mb-1">❌ Conventional Action</span>
@@ -57,32 +64,13 @@ export const ImpactComparisonCard: React.FC<ImpactComparisonCardProps> = React.m
         </div>
       </div>
 
-      {/* Quantified Metrics Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-slate-800 text-center">
-        <div className="p-2 rounded-lg bg-slate-950/60 border border-slate-800">
-          <span className="text-[10px] text-slate-400 block">PM2.5 Averted</span>
-          <strong className="text-sm font-extrabold text-emerald-400">
-            {choice.pm25InhaledAvertedUg} µg
-          </strong>
-        </div>
-        <div className="p-2 rounded-lg bg-slate-950/60 border border-slate-800">
-          <span className="text-[10px] text-slate-400 block">Alveolar Relief</span>
-          <strong className="text-sm font-extrabold text-blue-400">
-            -{choice.alveolarDepositionRiskDropPercent}%
-          </strong>
-        </div>
-        <div className="p-2 rounded-lg bg-slate-950/60 border border-slate-800">
-          <span className="text-[10px] text-slate-400 block">CO₂ Saved</span>
-          <strong className="text-sm font-extrabold text-teal-400">
-            {choice.co2SavedKg} kg
-          </strong>
-        </div>
-        <div className="p-2 rounded-lg bg-slate-950/60 border border-slate-800">
-          <span className="text-[10px] text-slate-400 block">Financial Saving</span>
-          <strong className="text-sm font-extrabold text-amber-300">
-            ${choice.moneySavedCurrency}
-          </strong>
-        </div>
+        {metrics.map((metric) => (
+          <div key={metric.label} className="p-2 rounded-lg bg-slate-950/60 border border-slate-800">
+            <span className="text-[10px] text-slate-400 block">{metric.label}</span>
+            <strong className={`text-sm font-extrabold ${metric.colorClass}`}>{metric.value}</strong>
+          </div>
+        ))}
       </div>
 
       <p className="mt-3 text-xs text-slate-400 italic">

@@ -21,6 +21,7 @@ export interface AirAnalyticsSummary {
   clearingWindowHour: number;
 }
 
+/** Computes real-time EPA AQI category, badge color, and atmospheric thermal inversion status. */
 export function useAirAnalytics(): AirAnalyticsSummary {
   const { activeZone } = useApp();
 

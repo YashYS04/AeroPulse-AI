@@ -46,6 +46,26 @@ const INITIAL_STATE: AppState = {
   isClearingSimulated: false,
 };
 
+function simulateZones(zones: UrbanZone[], isSpike: boolean): UrbanZone[] {
+  const aqiScale = isSpike ? 1.45 : 0.45;
+  const pm25Scale = isSpike ? 1.55 : 0.42;
+  const capOffset = isSpike ? 5.5 : -1.2;
+  const windSpeedKmh = isSpike ? 2.1 : 12.4;
+
+  return zones.map((z) => ({
+    ...z,
+    currentAqi: isSpike
+      ? Math.min(500, Math.round(z.currentAqi * aqiScale))
+      : Math.max(35, Math.round(z.currentAqi * aqiScale)),
+    pollutants: {
+      ...z.pollutants,
+      pm25: Math.round(z.pollutants.pm25 * pm25Scale * 10) / 10,
+    },
+    temperatureInversionCap: z.temperatureGround + capOffset,
+    windSpeedKmh,
+  }));
+}
+
 function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'SET_TAB':
@@ -77,37 +97,9 @@ function appReducer(state: AppState, action: AppAction): AppState {
       };
     }
     case 'TRIGGER_SMOG_SPIKE':
-      return {
-        ...state,
-        isSmogSimulated: true,
-        isClearingSimulated: false,
-        zones: state.zones.map((z) => ({
-          ...z,
-          currentAqi: Math.min(500, Math.round(z.currentAqi * 1.45)),
-          pollutants: {
-            ...z.pollutants,
-            pm25: Math.round(z.pollutants.pm25 * 1.55 * 10) / 10,
-          },
-          temperatureInversionCap: z.temperatureGround + 5.5,
-          windSpeedKmh: 2.1,
-        })),
-      };
+      return { ...state, isSmogSimulated: true, isClearingSimulated: false, zones: simulateZones(state.zones, true) };
     case 'TRIGGER_SOLAR_CLEAN':
-      return {
-        ...state,
-        isSmogSimulated: false,
-        isClearingSimulated: true,
-        zones: state.zones.map((z) => ({
-          ...z,
-          currentAqi: Math.max(35, Math.round(z.currentAqi * 0.45)),
-          pollutants: {
-            ...z.pollutants,
-            pm25: Math.round(z.pollutants.pm25 * 0.42 * 10) / 10,
-          },
-          temperatureInversionCap: z.temperatureGround - 1.2,
-          windSpeedKmh: 12.4,
-        })),
-      };
+      return { ...state, isSmogSimulated: false, isClearingSimulated: true, zones: simulateZones(state.zones, false) };
     case 'RESET_TELEMETRY':
       return { ...state, zones: INITIAL_URBAN_ZONES, isSmogSimulated: false, isClearingSimulated: false };
     default:
@@ -123,6 +115,7 @@ interface AppContextValue {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
+/** Provides global telemetry, persona, chat, and accessibility state to the application tree. */
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, INITIAL_STATE);
 
@@ -136,15 +129,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     safeStorageSet('aeropulse_a11y', state.accessibilityMode);
   }, [state.accessibilityMode]);
 
-  const activeZone = useMemo(() => {
-    return state.zones.find((z) => z.id === state.selectedZoneId) || state.zones[0];
-  }, [state.zones, state.selectedZoneId]);
+  const activeZone = useMemo(
+    () => state.zones.find((z) => z.id === state.selectedZoneId) || state.zones[0],
+    [state.zones, state.selectedZoneId]
+  );
 
   const value = useMemo(() => ({ state, dispatch, activeZone }), [state, activeZone]);
-
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
+/** Hook to access AeroPulse global state, dispatcher, and active urban zone. */
 export function useApp(): AppContextValue {
   const context = useContext(AppContext);
   if (!context) {

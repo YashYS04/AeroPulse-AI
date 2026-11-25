@@ -6,15 +6,42 @@
 import React, { useState, useMemo } from 'react';
 import { computeRoomCADRProfile } from '@/lib/compute/cadrCalculations';
 
+interface SliderConfig {
+  id: string;
+  label: string;
+  unit: string;
+  min: number;
+  max: number;
+  step: number;
+  value: number;
+  onChange: (val: number) => void;
+}
+
+/** Interactive ASHRAE 4 ACH room CADR and DIY Corsi-Rosenthal unit sizing calculator. */
 export const CorsiRosenthalBuilder: React.FC = React.memo(() => {
   const [lengthM, setLengthM] = useState<number>(5.0);
   const [widthM, setWidthM] = useState<number>(4.0);
   const [heightM, setHeightM] = useState<number>(2.8);
   const [targetAch, setTargetAch] = useState<number>(4);
 
-  const profile = useMemo(() => {
-    return computeRoomCADRProfile(lengthM, widthM, heightM, targetAch, 380);
-  }, [lengthM, widthM, heightM, targetAch]);
+  const profile = useMemo(
+    () => computeRoomCADRProfile(lengthM, widthM, heightM, targetAch, 380),
+    [lengthM, widthM, heightM, targetAch]
+  );
+
+  const sliders: SliderConfig[] = [
+    { id: 'room-length', label: 'Length', unit: 'm', min: 2.0, max: 12.0, step: 0.5, value: lengthM, onChange: setLengthM },
+    { id: 'room-width', label: 'Width', unit: 'm', min: 2.0, max: 10.0, step: 0.5, value: widthM, onChange: setWidthM },
+    { id: 'room-height', label: 'Height', unit: 'm', min: 2.0, max: 4.5, step: 0.1, value: heightM, onChange: setHeightM },
+    { id: 'target-ach', label: 'Target ACH', unit: '/ hr', min: 2, max: 6, step: 1, value: targetAch, onChange: setTargetAch },
+  ];
+
+  const metricCards = [
+    { label: 'Room Volume', value: `${profile.roomVolumeM3} m³`, colorClass: 'text-white' },
+    { label: 'Required CADR', value: `${profile.requiredCADRm3h} m³/h`, colorClass: 'text-emerald-400' },
+    { label: '90% Clearance Time', value: `${profile.clearanceTimeMinutes} mins`, colorClass: 'text-blue-400' },
+    { label: 'Recommended DIY Units', value: `${profile.recommendedUnitsCount} Box Fan`, colorClass: 'text-amber-300' },
+  ];
 
   return (
     <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl">
@@ -32,90 +59,33 @@ export const CorsiRosenthalBuilder: React.FC = React.memo(() => {
         </span>
       </div>
 
-      {/* Input sliders/controls */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-        <div>
-          <label htmlFor="room-length" className="text-xs font-semibold text-slate-300 block mb-1">
-            Length: {lengthM} m
-          </label>
-          <input
-            id="room-length"
-            type="range"
-            min="2.0"
-            max="12.0"
-            step="0.5"
-            value={lengthM}
-            onChange={(e) => setLengthM(parseFloat(e.target.value))}
-            className="w-full accent-emerald-500"
-          />
-        </div>
-        <div>
-          <label htmlFor="room-width" className="text-xs font-semibold text-slate-300 block mb-1">
-            Width: {widthM} m
-          </label>
-          <input
-            id="room-width"
-            type="range"
-            min="2.0"
-            max="10.0"
-            step="0.5"
-            value={widthM}
-            onChange={(e) => setWidthM(parseFloat(e.target.value))}
-            className="w-full accent-emerald-500"
-          />
-        </div>
-        <div>
-          <label htmlFor="room-height" className="text-xs font-semibold text-slate-300 block mb-1">
-            Height: {heightM} m
-          </label>
-          <input
-            id="room-height"
-            type="range"
-            min="2.0"
-            max="4.5"
-            step="0.1"
-            value={heightM}
-            onChange={(e) => setHeightM(parseFloat(e.target.value))}
-            className="w-full accent-emerald-500"
-          />
-        </div>
-        <div>
-          <label htmlFor="target-ach" className="text-xs font-semibold text-slate-300 block mb-1">
-            Target ACH: {targetAch} / hr
-          </label>
-          <input
-            id="target-ach"
-            type="range"
-            min="2"
-            max="6"
-            step="1"
-            value={targetAch}
-            onChange={(e) => setTargetAch(parseInt(e.target.value, 10))}
-            className="w-full accent-emerald-500"
-          />
-        </div>
+        {sliders.map((s) => (
+          <div key={s.id}>
+            <label htmlFor={s.id} className="text-xs font-semibold text-slate-300 block mb-1">
+              {s.label}: {s.value} {s.unit}
+            </label>
+            <input
+              id={s.id}
+              type="range"
+              min={s.min}
+              max={s.max}
+              step={s.step}
+              value={s.value}
+              onChange={(e) => s.onChange(Number(e.target.value))}
+              className="w-full accent-emerald-500"
+            />
+          </div>
+        ))}
       </div>
 
-      {/* Output Metric Badges */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-800">
-        <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
-          <span className="text-[11px] text-slate-400 block">Room Volume</span>
-          <strong className="text-xl font-black text-white">{profile.roomVolumeM3} m³</strong>
-        </div>
-        <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
-          <span className="text-[11px] text-slate-400 block">Required CADR</span>
-          <strong className="text-xl font-black text-emerald-400">{profile.requiredCADRm3h} m³/h</strong>
-        </div>
-        <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
-          <span className="text-[11px] text-slate-400 block">90% Clearance Time</span>
-          <strong className="text-xl font-black text-blue-400">{profile.clearanceTimeMinutes} mins</strong>
-        </div>
-        <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
-          <span className="text-[11px] text-slate-400 block">Recommended DIY Units</span>
-          <strong className="text-xl font-black text-amber-300">
-            {profile.recommendedUnitsCount} Box Fan
-          </strong>
-        </div>
+        {metricCards.map((m) => (
+          <div key={m.label} className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+            <span className="text-[11px] text-slate-400 block">{m.label}</span>
+            <strong className={`text-xl font-black ${m.colorClass}`}>{m.value}</strong>
+          </div>
+        ))}
       </div>
     </div>
   );

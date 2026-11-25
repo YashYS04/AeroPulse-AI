@@ -6,7 +6,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { app } from './server/app';
+import { app } from './server/app.js';
 
 export { app };
 

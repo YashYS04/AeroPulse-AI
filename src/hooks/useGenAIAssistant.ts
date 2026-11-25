@@ -8,6 +8,7 @@ import { useApp } from '@/context/AppContext';
 import { sendAssistantMessage } from '@/services/apiService';
 import { AssistantMessage } from '@/types/assistant';
 
+/** Manages conversational GenAI chat history, pending indicator, and safe error handling. */
 export function useGenAIAssistant() {
   const { state, dispatch, activeZone } = useApp();
   const [isPending, setIsPending] = useState(false);
